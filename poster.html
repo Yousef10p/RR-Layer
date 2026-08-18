@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Batch Normalization using an SVD Layer</title>
+<style>
+  @page { size: 1189mm 841mm; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --navy: #16355c;
+    --teal: #009ca6;
+    --orange: #f7a800;
+    --ink: #2b3a4a;
+    --bg: #f0f4f8;
+  }
+  html, body { width: 1189mm; height: 841mm; font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: var(--ink); background: var(--bg); }
+  body { display: flex; flex-direction: column; }
+
+  /* ---------- header ---------- */
+  header { background: #fff; padding: 12mm 18mm; display: flex; align-items: center; gap: 12mm; border-bottom: 5mm solid var(--navy); }
+  .logos { display: flex; align-items: center; gap: 10mm; }
+  .logos img { height: 34mm; width: auto; }
+  .head-mid { flex: 1; text-align: center; }
+  .head-mid h1 { color: var(--navy); font-size: 82pt; font-weight: 800; line-height: 1.02; white-space: nowrap; }
+  .head-mid .authors { margin-top: 6mm; font-size: 32pt; color: var(--ink); }
+  .head-mid .affil { margin-top: 2mm; font-size: 24pt; color: #6b7c8d; }
+
+  /* ---------- columns ---------- */
+  main { flex: 1; display: grid; grid-template-columns: 1fr 1.12fr 1fr; gap: 12mm; padding: 12mm 18mm; min-height: 0; }
+  .col { display: flex; flex-direction: column; gap: 12mm; min-height: 0; }
+
+  section { background: #fff; border-radius: 7mm; padding: 10mm 11mm; box-shadow: 0 1.5mm 5mm rgba(22,53,92,.08); }
+  section.grow { flex: 1; }
+  h2 { font-size: 60pt; color: var(--navy); font-weight: 800; padding-bottom: 3mm; margin-bottom: 7mm; border-bottom: 1.8mm solid var(--teal); }
+  h2 .num { color: var(--teal); }
+  p, li { font-size: 38pt; line-height: 1.45; }
+  ul { padding-left: 13mm; }
+  li { margin-bottom: 6mm; }
+  b.k { color: var(--navy); }
+
+  .eq { font-family: "Cambria Math", Cambria, Georgia, serif; background: #f2f7fa; border-radius: 4mm; padding: 6mm 8mm; margin: 6mm 0; font-size: 42pt; text-align: center; color: var(--navy); }
+  sub, sup { font-size: 65%; }
+
+  .note { background: #fff6e2; border-radius: 4mm; padding: 6mm 8mm; margin-top: 8mm; font-size: 38pt; }
+
+  figure { margin: 6mm 0 0; text-align: center; }
+  figure svg { width: 100%; height: auto; }
+  figcaption { font-size: 28pt; color: #6b7c8d; margin-top: 3mm; }
+
+  code.inline { font-family: Consolas, monospace; background: #eef3f8; color: var(--navy); border-radius: 2mm; padding: 0 3mm; font-size: 34pt; }
+
+  .todo { border: 1.5mm dashed #a9bccd; background: #fbfdff; box-shadow: none; display: flex; flex-direction: column; }
+  .todo .todo-body { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; color: #8aa0b4; font-size: 36pt; font-weight: 600; line-height: 1.6; padding: 10mm; }
+
+  .refs { padding: 5mm 11mm; }
+  .refs h2 { font-size: 30pt; margin-bottom: 3mm; border-bottom-width: 1.2mm; }
+  .refs p { font-size: 20pt; color: #55677a; margin-bottom: 2mm; line-height: 1.3; }
+
+  footer { background: var(--navy); color: #cfe0ee; text-align: center; font-size: 22pt; padding: 5mm; }
+  footer b { color: #fff; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logos">
+    <img src="logos/kaust_academy.png" alt="KAUST Academy">
+    <img src="logos/kaust.png" alt="KAUST">
+    <img src="logos/moe.png" alt="Ministry of Education">
+  </div>
+  <div class="head-mid">
+    <h1>Batch Normalization using an SVD Layer</h1>
+    <div class="authors">Abdulmohsen Mohammedsaleh &nbsp;&bull;&nbsp; Majed Alsulami &nbsp;&bull;&nbsp; Yousef Alogiley</div>
+    <div class="affil">Mentor: Jad Mounayer &nbsp;&bull;&nbsp; KAUST Academy Summer Program 2026</div>
+  </div>
+  <div class="logos">
+    <img src="logos/oxford.png" alt="University of Oxford">
+    <img src="logos/alagil.png" alt="Alagil Foundation">
+    <img src="logos/rzm.png" alt="RZM">
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ COLUMN 1 ============ -->
+  <div class="col">
+    <section>
+      <h2><span class="num">01.</span> Introduction</h2>
+      <p><b class="k">Batch Normalization (BN)</b> rescales every feature of a mini-batch to mean 0 and variance 1:</p>
+      <div class="eq">y = &gamma; &middot; (x &minus; &mu;<sub>B</sub>) / &sigma;<sub>B</sub> + &beta;</div>
+      <p>This simple step lets networks train faster and reach <b class="k">higher accuracy</b>, making BN a standard layer in deep learning.</p>
+      <figure>
+        <img src="figs/intro_bn.png" style="width:100%">
+      </figure>
+    </section>
+
+    <section class="grow">
+      <h2><span class="num">02.</span> Objective</h2>
+      <p><b class="k">Rank Reduction Autoencoders</b> (Mounayer et al., 2024) regularize networks with the truncated <b class="k">SVD</b>, no extra loss needed.
+         Like BN, it <b class="k">changes the statistics of the batch</b>.</p>
+      <div class="note"><b>Can the SVD alone normalize a batch as well as BN?</b> We build it into a standalone <b>SVD layer</b> to find out.</div>
+    </section>
+  </div>
+
+  <!-- ============ COLUMN 2 ============ -->
+  <div class="col">
+    <section class="grow">
+      <h2><span class="num">03.</span> Methodology</h2>
+      <p>The SVD layer keeps the batch&rsquo;s <b class="k">top-k singular directions</b> and normalizes them by their singular values:</p>
+      <div class="eq">X = U &Sigma; V<sup>T</sup> &nbsp;&rarr;&nbsp; X&#770; = &radic;N &middot; U<sub>k</sub> V<sub>k</sub><sup>T</sup> &nbsp;&nbsp;(&sigma;<sub>i</sub> &rarr; 1)</div>
+      <figure>
+        <img src="figs/method_svd.png" style="width:100%">
+        <figcaption>BN-style normalization, but in the batch&rsquo;s own decorrelated SVD basis.</figcaption>
+      </figure>
+      <ul style="margin-top:8mm">
+        <li>Task: regress a Gaussian source&rsquo;s centre (x, y) from a 64&times;64 image &mdash; <b class="k">point-source localization</b>, as in astrometry and microscopy.</li>
+        <li>Compare <b class="k">Plain vs BN vs SVD</b> from <b class="k">identical initial weights</b>, over up to 32 seeds &mdash; sweeping rank k, noise level and type, and dataset size N.</li>
+        <li>External validity via <b class="k">source injection</b>: a known source planted on real image backgrounds (astronomy&rsquo;s own validation method).</li>
+      </ul>
+      <figure style="margin-top:6mm">
+        <img src="figs/mnist_preview.png" style="width:100%">
+        <figcaption>Injected source (red +) on real backgrounds: ground truth stays exact, clutter statistics become real.</figcaption>
+      </figure>
+    </section>
+  </div>
+
+  <!-- ============ COLUMN 3 ============ -->
+  <div class="col">
+    <section class="grow">
+      <h2><span class="num">04.</span> Results</h2>
+      <figure style="margin-top:0">
+        <img src="figs/exp4_crossover.png" style="width:52%">
+        <figcaption>Small data + heavy noise (32 seeds): the SVD layer (green) beats BN everywhere and the plain net for N &le; 100. (OA = plain, OA_RR = SVD layer.)</figcaption>
+      </figure>
+      <div style="display:flex; gap:6mm; margin-top:4mm; align-items:flex-start; width:88%; margin-left:auto; margin-right:auto">
+        <figure style="flex:1.25; margin:0"><img src="figs/rank_sweep.png" style="width:100%"><figcaption>Error falls monotonically with rank k.</figcaption></figure>
+        <figure style="flex:0.9; margin:0"><img src="figs/mnist_bar.png" style="width:100%"><figcaption>Real backgrounds: SVD &asymp; 50&times; better than BN.</figcaption></figure>
+      </div>
+      <ul style="margin-top:5mm">
+        <li style="font-size:26pt"><b class="k">SVD beats BN in every like-for-like bottleneck comparison</b> &mdash; often by orders of magnitude &mdash; though per-layer BN on clean, plentiful data remains stronger.</li>
+        <li style="font-size:26pt">Beats the plain net <b class="k">2&ndash;3&times; when data is scarce and noisy</b> (N &le; 100); ties at N &asymp; 200.</li>
+        <li style="font-size:26pt">Frozen inference basis is free (0.0028 vs 0.0034 MSE); <b class="k">per-layer insertion diverges</b> &mdash; use one bottleneck.</li>
+      </ul>
+    </section>
+
+    <section style="flex:0 0 auto">
+      <h2><span class="num">05.</span> Conclusion</h2>
+      <ul>
+        <li style="font-size:26pt">The SVD layer is a <b class="k">more robust drop-in alternative to BN</b>, and outperforms even the unregularized network in the small-data, high-noise regime of source localization.</li>
+        <li style="font-size:26pt">Its one weakness: keeping top-k passes <b class="k">structured low-rank nuisance</b> through &mdash; the inverse of astronomy&rsquo;s KLIP. A <b class="k">reject-top-k</b> variant is the natural next step.</li>
+      </ul>
+    </section>
+
+    <section class="refs">
+      <h2>References</h2>
+      <p>J. Mounayer et al. <i>Rank Reduction Autoencoders</i>. arXiv:2405.13980, 2024.</p>
+      <p>S. Ioffe, C. Szegedy. <i>Batch Normalization</i>. ICML 2015.</p>
+      <p>R. Soummer et al. <i>Detection and Characterization of Exoplanets using Projections on Karhunen-Lo&egrave;ve Eigenimages (KLIP)</i>. ApJL 2012.</p>
+    </section>
+  </div>
+
+</main>
+
+<footer>
+  <b>KAUST Academy Summer Program 2026</b> &nbsp;&bull;&nbsp; Batch Normalization using an SVD Layer &nbsp;&bull;&nbsp; Mentor: Jad Mounayer (jad.mounayer@outlook.com)
+</footer>
+
+</body>
+</html>
