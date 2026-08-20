@@ -11,6 +11,16 @@ network, compared against Batch Normalization and against an unnormalized baseli
 The repository is intended to preserve the research experiments, the layer implementation, the
 evaluations, and the associated presentation materials produced during this work.
 
+## Team
+
+The work was carried out by, as credited on the poster:
+
+- Yousef Alogiely
+- Abdulmohsen Mohammedsaleh
+- Majed Alsulami
+
+Supervisor: **Jad Mounayer** (jad.mounayer@outlook.com)
+
 ## Repository Contents
 
 ```text
