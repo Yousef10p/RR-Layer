@@ -1,0 +1,65 @@
+{
+  "_readme": [
+    "EDIT THIS FILE TO CHANGE THE TEAM SECTION. Nothing else needs to be touched.",
+    "Every field is optional except `name` — a blank field simply does not render,",
+    "so leave it as \"\" rather than inventing a value.",
+    "",
+    "  name       full name, shown on the card",
+    "  role       e.g. 'Experiments & evaluation'; blank hides the line",
+    "  affiliation programme or lab, e.g. 'KAUST Academy'",
+    "  university home university, shown under the affiliation",
+    "  email      shown as a mailto: link",
+    "  linkedin   full https:// URL",
+    "  github     full https:// URL",
+    "  cv         path inside public/, e.g. 'cv/your-name.pdf' (no leading slash)",
+    "",
+    "ADD A MEMBER  : copy one { ... } block inside \"members\" and edit it.",
+    "REPLACE A CV  : drop the PDF into app/public/cv/ and point `cv` at it."
+  ],
+
+  "programme": {
+    "name": "KAUST Academy Summer Program 2026",
+    "stage": "University of Oxford stage"
+  },
+
+  "members": [
+    {
+      "name": "Yousef Alogiely",
+      "role": "AI/ML Engineer",
+      "affiliation": "KAUST Academy",
+      "university": "Qassim University",
+      "email": "yousef.alogiley@gmail.com",
+      "linkedin": "https://www.linkedin.com/in/yousef-alogiely-29389b283/",
+      "github": "https://github.com/Yousef10p",
+      "cv": "cv/yousef-alogiley.pdf"
+    },
+    {
+      "name": "Abdulmohsen Hamed Mohammedsaleh",
+      "role": "Quant & ML Researcher",
+      "affiliation": "KAUST Academy",
+      "university": "King Abdulaziz University",
+      "email": "Abdulmohsen1284@gmail.com",
+      "linkedin": "https://www.linkedin.com/in/abdulmohsen-saleh-1888aa243/",
+      "github": "https://github.com/Abdulmohsen128",
+      "cv": "cv/abdulmohsen-mohammedsaleh.pdf"
+    },
+    {
+      "name": "Majed Alsulami",
+      "role": "Ai Engineer",
+      "affiliation": "KAUST Academy",
+      "university": "KAU",
+      "email": "majedsaadalsulami@gmail.com",
+      "linkedin": "https://www.linkedin.com/in/majedalsulami/",
+      "github": "https://github.com/MajedAlsulami",
+      "cv": "cv/majed-alsulami.pdf"
+    }
+  ],
+
+  "mentor": {
+    "name": "Jad Mounayer",
+    "role": "Mentor",
+    "email": "jad.mounayer@outlook.com",
+    "note": "Author of Rank Reduction Autoencoders, the work this layer is isolated from.",
+    "link": "https://github.com/JadM133/RR_layer"
+  }
+}
