@@ -1,12 +1,20 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+// import { defineConfig } from "vite";
+// import react from "@vitejs/plugin-react";
 
-// Static site — no backend. `npm run build` emits a self-contained dist/.
+// // Static site — no backend. `npm run build` emits a self-contained dist/.
+// export default defineConfig({
+//   plugins: [react()],
+//   base: "./",
+//   build: {
+//     outDir: "dist",
+//     sourcemap: false
+//   }
+// });
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
 export default defineConfig({
   plugins: [react()],
-  base: "./",
-  build: {
-    outDir: "dist",
-    sourcemap: false
-  }
-});
+  base: '/RR-Layer/',
+})
